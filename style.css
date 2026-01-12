@@ -1,0 +1,160 @@
+/* =====================================================
+   VARIABLES BASE (AUTO LIGHT / DARK)
+===================================================== */
+:root {
+    --radius: 14px;
+    --blur: 6px;
+    --border-soft: rgba(0,0,0,0.08);
+}
+
+/* ================= DARK MODE ================= */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0b0f1a;
+        --surface: #12172a;
+        --surface-glass: rgba(255,255,255,0.06);
+        --border: #232a4a;
+        --text: #e5e7eb;
+        --text-soft: #cbd5e1;
+        --accent: #38bdf8;
+        --scroll: #2a335c;
+    }
+}
+
+/* ================= LIGHT MODE ================= */
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg: #f5f7fb;
+        --surface: #ffffff;
+        --surface-glass: rgba(0,0,0,0.035);
+        --border: #d6d9e6;
+        --text: #0f172a;
+        --text-soft: #475569;
+        --accent: #0284c7;
+        --scroll: #cbd5e1;
+    }
+}
+
+/* =====================================================
+   BASE GLOBAL
+===================================================== */
+html, body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+/* =====================================================
+   OCULTAR HEADER STREAMLIT
+===================================================== */
+div[data-testid="stToolbarActions"],
+span[data-testid="stMainMenu"] {
+    display: none !important;
+}
+
+/* =====================================================
+   CONTENIDO PRINCIPAL
+===================================================== */
+section[data-testid="stMain"] {
+    background-color: var(--bg);
+}
+
+/* =====================================================
+   LAYOUT GENERAL
+===================================================== */
+html, body, [data-testid="stAppViewContainer"] {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.block-container {
+    padding-top: 1.5rem !important;
+    padding-bottom: 0 !important;
+    height: 100vh;
+}
+
+/* =====================================================
+   MÉTRICAS
+===================================================== */
+[data-testid="metric-container"] {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+}
+
+/* =====================================================
+   TABLAS
+===================================================== */
+[data-testid="stDataFrame"] {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+/* =====================================================
+   BOTONES
+===================================================== */
+.stButton > button {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    transition: all 0.25s ease;
+}
+
+.stButton > button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+}
+
+/* =====================================================
+   SCROLLBAR
+===================================================== */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--scroll);
+    border-radius: 6px;
+}
+
+/* =====================================================
+   CARDS (GLASS SUAVE)
+===================================================== */
+.card-record {
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface-glass);
+    backdrop-filter: blur(var(--blur));
+}
+
+/* Texto */
+.card-record p {
+    margin: 6px 0 10px;
+    color: var(--text-soft);
+    font-size: 0.95rem;
+}
+
+/* =====================================================
+   GALERÍA DE IMÁGENES
+===================================================== */
+.img-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.img-grid img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
