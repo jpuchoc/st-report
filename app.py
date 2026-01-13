@@ -442,8 +442,7 @@ elif pagina == "Tiempos promedio de zona":
         xaxis_tickangle=-45,
         yaxis_title="Tiempo promedio (minutos)",
         xaxis_title="Ubicación",
-        height=500,  # ⬅️ AUMENTA ALTURA
-        margin=dict(l=20, r=20, t=30, b=120),
+        margin=dict(l=20, r=20, t=50, b=120),
         legend=dict(
             orientation="h",
             yanchor="top",
@@ -453,7 +452,8 @@ elif pagina == "Tiempos promedio de zona":
         )
     )
 
-    st.plotly_chart(fig_tipo, width='stretch')
+    st.plotly_chart(fig_tipo, use_container_width=True)
+
 
 # ==============================
 # PÁGINA: Tiempos promedio por ubicación
