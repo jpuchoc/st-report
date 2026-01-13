@@ -433,7 +433,7 @@ elif pagina == "Tiempos promedio de zona":
         .reset_index()
     )
 
-    df_tipo_prom = df_tipo_prom.fillna(0)
+    #df_tipo_prom = df_tipo_prom.fillna(0)
 
     df_tipo_long = df_tipo_prom.melt(
         id_vars="Tipo",
@@ -708,6 +708,7 @@ elif pagina == "Detalle Zonas":
 
     else:
         st.info("No hay columnas de tiempo disponibles para graficar.")
+
 
 
 
