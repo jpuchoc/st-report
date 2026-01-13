@@ -616,42 +616,50 @@ elif pagina == "Detalle Zonas":
         # COLUMNA DERECHA – TABLA (70%)
         # ==================================================
         with col_tabla:
-            st.subheader("Detalle por NIA")
+        st.subheader("Detalle por NIA")
+    
+        # ==============================
+        # PROMEDIO POR UBICACIÓN
+        # ==============================
+        prom_ubicacion = (
+            df_tipo[orden_ubicaciones]
+            .mean()
+            .reset_index()
+            .rename(columns={
+                "index": "Ubicación",
+                0: "Promedio_minutos"
+            })
+        )
+    
+        promedio_val = prom_ubicacion.loc[
+            prom_ubicacion["Ubicación"] == selected_location,
+            "Promedio_minutos"
+        ].iloc[0]
+    
+        st.write(
+            f"Tiempo promedio en **{selected_location}** "
+            f"para tipo **{selected_tipo}**: "
+            f"{promedio_val:.2f} minutos"
+        )
+    
+        # ==============================
+        # DETALLE POR NIA (ORDEN CORRECTO)
+        # ==============================
+        nias_filtradas = (
+            df_tipo[["NIA", selected_location, "Ingreso", "Empresa"]]
+            .rename(columns={selected_location: "Tiempo (min)"})
+            .sort_values("Tiempo (min)", ascending=False)
+            .reset_index(drop=True)
+        )
+    
+        # Formato visual
+        nias_filtradas["Tiempo (min)"] = nias_filtradas["Tiempo (min)"].round(2)
+    
+        st.dataframe(
+            nias_filtradas,
+            width='stretch'
+        )
 
-            # 4️⃣ PROMEDIOS POR UBICACIÓN (SIN ORDENAR)
-            prom_ubicacion = df_tipo[orden_ubicaciones].mean().reset_index()
-            prom_ubicacion.columns = ["Ubicación", "Promedio_minutos"]
-
-            # 6️⃣ DETALLE POR NIA
-            nias_filtradas = (
-                df_tipo[["NIA", "Ingreso", "Empresa", selected_location]]
-                .rename(columns={selected_location: "Tiempo (min)"})
-            )
-            
-            cols = list(nias_filtradas.columns)
-            cols.remove("Tiempo (min)")
-            nia_index = cols.index("NIA") + 1
-            cols.insert(nia_index, "Tiempo (min)")
-            
-            nias_filtradas = nias_filtradas[cols].sort_values(
-                "Tiempo (min)", ascending=False
-            ).reset_index(drop=True)
-
-            promedio_val = prom_ubicacion.loc[
-                prom_ubicacion["Ubicación"] == selected_location,
-                "Promedio_minutos"
-            ].values[0]
-
-            st.write(
-                f"Tiempo promedio en **{selected_location}** "
-                f"para tipo **{selected_tipo}**: "
-                f"{promedio_val:.2f} minutos"
-            )
-
-            st.dataframe(
-                nias_filtradas,
-                width='stretch'
-            )
 
         # --------------------------------------------------
         # 7️⃣ RESPETAR ORDEN EN PLOTLY
@@ -697,6 +705,7 @@ elif pagina == "Detalle Zonas":
 
     else:
         st.info("No hay columnas de tiempo disponibles para graficar.")
+
 
 
 
