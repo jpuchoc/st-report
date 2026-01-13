@@ -421,46 +421,133 @@ elif pagina == "Recorridos":
 elif pagina == "Tiempos promedio de zona":
     st.subheader("Tiempo promedio por ubicación según Tipo de unidad")
 
-    df_tipo_prom = df_graficos.groupby("Tipo")[cols_tiempos].mean().reset_index()
-    df_tipo_long = df_tipo_prom.melt(id_vars="Tipo", var_name="Ubicación", value_name="Promedio_minutos")
+    # ============================
+    # PREPARAR DATOS
+    # ============================
+    df_tipo_prom = (
+        df_graficos
+        .groupby("Tipo")[cols_tiempos]
+        .mean()
+        .reset_index()
+    )
 
+    df_tipo_long = df_tipo_prom.melt(
+        id_vars="Tipo",
+        var_name="Ubicación",
+        value_name="Promedio_minutos"
+    )
+
+    # Orden real del eje X
+    orden_x = df_tipo_long["Ubicación"].unique().tolist()
+
+    # ============================
+    # GRÁFICO
+    # ============================
     fig_tipo = px.bar(
         df_tipo_long,
         x="Ubicación",
         y="Promedio_minutos",
         color="Tipo",
         barmode="group",
-        labels={"Ubicación":"Ubicación","Promedio_minutos":"Tiempo promedio (minutos)"},
-        text_auto=".2f",
+        labels={
+            "Ubicación": "Ubicación",
+            "Promedio_minutos": "Tiempo promedio (minutos)"
+        },
+        text_auto=".0f",
         color_discrete_map={
             "Plataforma": "steelblue",
             "Tolva": "orange",
         }
     )
-    fig_tipo.update_traces(textposition='outside')
 
+    fig_tipo.update_traces(textposition="outside")
+
+    # ============================
+    # ESPACIO PARA ETIQUETAS
+    # ============================
     max_y = df_tipo_long["Promedio_minutos"].max()
-
-    fig_tipo.update_layout(
-        xaxis_tickangle=-45,
-        yaxis_title="Tiempo promedio (minutos)",
-        xaxis_title="Ubicación",
-        margin=dict(l=20, r=20, t=50, b=120),
-        legend=dict(
-            orientation="h",
-            yanchor="top",
-            y=-0.45,
-            xanchor="center",
-            x=0.5
-        )
-    )
 
     fig_tipo.update_yaxes(
         range=[0, max_y * 1.25],
         automargin=True
     )
 
-    st.plotly_chart(fig_tipo, use_container_width=True)
+    # ============================
+    # BANDAS DE FONDO
+    # ============================
+    def banda(x0, x1, color):
+        return dict(
+            type="rect",
+            xref="x",
+            yref="paper",
+            x0=x0 - 0.5,
+            x1=x1 + 0.5,
+            y0=0,
+            y1=0.8,
+            fillcolor=color,
+            opacity=0.20,
+            layer="below",
+            line_width=0
+        )
+
+    shapes = []
+
+    if "Ruta Calificación" in orden_x and "Descarga" in orden_x:
+        shapes.append(
+            banda(
+                orden_x.index("Ruta Calificación"),
+                orden_x.index("Descarga"),
+                "#FF5B5B"   # azul claro
+            )
+        )
+
+    # ============================
+    # LAYOUT
+    # ============================
+    fig_tipo.update_layout(
+        xaxis_tickangle=-45,
+        yaxis_title="Tiempo promedio (minutos)",
+        xaxis_title="Ubicación",
+        margin=dict(l=20, r=20, t=20, b=120),
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=-0.45,
+            xanchor="center",
+            x=0.5
+        ),
+        shapes=shapes
+    )
+
+    # ============================
+    # MOSTRAR
+    # ============================
+    st.plotly_chart(fig_tipo, width='stretch')
+
+    ubicaciones_clave = [
+        "Ruta Calificación",
+        "Calificación",
+        "Ruta Descarga",
+        "Descarga"
+    ]
+    df_tiempo_destacado = (
+        df_tipo_long[df_tipo_long["Ubicación"].isin(ubicaciones_clave)]
+        .groupby("Tipo")["Promedio_minutos"]
+        .sum()
+        .reset_index()
+    )
+
+
+    st.markdown("#### Tiempo destacado")
+
+    cols = st.columns(len(df_tiempo_destacado))
+
+    for col, (_, row) in zip(cols, df_tiempo_destacado.iterrows()):
+        col.metric(
+            label=f"{row['Tipo']}",
+            value=f"{row['Promedio_minutos']:.0f} min"
+        )
+
 
 # ==============================
 # PÁGINA: Tiempos promedio por ubicación
@@ -557,7 +644,7 @@ elif pagina == "Detalle Zonas":
                 "Ubicación": "Ubicación",
                 "Promedio_minutos": "Tiempo promedio (minutos)"
             },
-            text_auto=".2f",
+            text_auto=".1f",
             category_orders={"Ubicación": orden_ubicaciones}
         )
 
