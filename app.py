@@ -419,7 +419,7 @@ elif pagina == "Recorridos":
 # PÁGINA: Gráficos por tipo de unidad
 # ==============================
 elif pagina == "Tiempos promedio de zona":
-    st.subheader("Tiempo promedio por ubicación según Tipo de unidad")
+    st.subheader("Tiempo promedio por Zona y Tipo")
 
     # ============================
     # PREPARAR DATOS
@@ -459,6 +459,29 @@ elif pagina == "Tiempos promedio de zona":
             "Tolva": "orange",
         }
     )
+
+    fig_tipo.update_traces(
+        textposition="outside",
+        textfont=dict(size=14)
+    )
+
+    fig_tipo.update_xaxes(
+        tickfont=dict(size=14),
+        title_font=dict(size=14)
+    )
+
+    fig_tipo.update_yaxes(
+        tickfont=dict(size=12),
+        title_font=dict(size=14)
+    )
+
+    fig_tipo.update_layout(
+        legend=dict(
+            font=dict(size=12),
+            title_font=dict(size=13)
+        )
+    )
+
 
     fig_tipo.update_traces(textposition="outside")
 
@@ -510,6 +533,7 @@ elif pagina == "Tiempos promedio de zona":
         xaxis_title="Ubicación",
         margin=dict(l=20, r=20, t=20, b=120),
         legend=dict(
+            title_text=" ",
             orientation="h",
             yanchor="top",
             y=-0.45,
