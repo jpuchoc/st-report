@@ -34,10 +34,11 @@ st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 # ==============================
 # CONFIGURACIÓN Y PARÁMETROS
 # ==============================
-BASE_URL = "https://tracker.acerosarequipa.com"
-USERNAME = "demo.aceria@smelpro.com"
-PASSWORD = "demo2025"
-ASSET_ID = "00ad3a40-838f-11f0-97ae-99ce2c54259f"
+BASE_URL = st.secrets["BASE_URL"]
+USERNAME = st.secrets["USERNAME"]
+PASSWORD = st.secrets["PASSWORD"]
+ASSET_ID = st.secrets["ASSET_ID"]
+
 KEYS = [
     "logs_nia","logs_ubicacion",
     "shared_tipo","shared_placaTracto","shared_placaPlataforma",
@@ -689,4 +690,5 @@ elif pagina == "Detalle Zonas":
 
     else:
         st.info("No hay columnas de tiempo disponibles para graficar.")
+
 
