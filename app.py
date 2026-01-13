@@ -433,7 +433,7 @@ elif pagina == "Tiempos promedio de zona":
         .reset_index()
     )
 
-    #df_tipo_prom = df_tipo_prom.fillna(0)
+    df_tipo_prom = df_tipo_prom.fillna(0)
 
     df_tipo_long = df_tipo_prom.melt(
         id_vars="Tipo",
@@ -622,45 +622,75 @@ elif pagina == "Detalle Zonas":
             st.subheader("Detalle por NIA")
         
             # ==============================
-            # PROMEDIO POR UBICACIÓN
+            # COLUMNAS NUMÉRICAS (UBICACIONES)
             # ==============================
-            prom_ubicacion = (
-                df_tipo[orden_ubicaciones]
-                .mean()
-                .reset_index()
-                .rename(columns={
-                    "index": "Ubicación",
-                    0: "Promedio_minutos"
-                })
+            cols_ubicaciones = orden_ubicaciones  # lista dinámica
+        
+            # ==============================
+            # DATAFRAME NUMÉRICO LIMPIO
+            # (0 → NaN para no afectar promedios)
+            # ==============================
+            df_num = df_tipo[cols_ubicaciones].where(
+                df_tipo[cols_ubicaciones] != 0
             )
         
+            # ==============================
+            # PROMEDIO POR UBICACIÓN (VECTORIZADO)
+            # ==============================
+            prom_ubicacion = (
+                df_num
+                .mean(axis=0, skipna=True)
+                .rename("Promedio_minutos")
+                .reset_index()
+                .rename(columns={"index": "Ubicación"})
+            )
+        
+            # ==============================
+            # PROMEDIO DE LA UBICACIÓN SELECCIONADA
+            # ==============================
             promedio_val = prom_ubicacion.loc[
                 prom_ubicacion["Ubicación"] == selected_location,
                 "Promedio_minutos"
-            ].iloc[0]
+            ]
         
-            st.write(
-                f"Tiempo promedio en **{selected_location}** "
-                f"para tipo **{selected_tipo}**: "
-                f"{promedio_val:.2f} minutos"
-            )
+            if promedio_val.empty or pd.isna(promedio_val.iloc[0]):
+                st.warning(f"No hay datos válidos para **{selected_location}**")
+            else:
+                st.write(
+                    f"Tiempo promedio en **{selected_location}** "
+                    f"para tipo **{selected_tipo}**: "
+                    f"**{promedio_val.iloc[0]:.2f} minutos**"
+                )
         
             # ==============================
-            # DETALLE POR NIA (ORDEN CORRECTO)
+            # DETALLE POR NIA (SIN 0 / NaN)
             # ==============================
+            cols_detalle = [
+                "NIA",
+                selected_location,
+                "T. Permanencia (h)",
+                "T. Descarga (h)",
+                "Empresa",
+                "Ingreso",
+                "Salida"
+            ]
+        
             nias_filtradas = (
-                df_tipo[["NIA", selected_location,"T. Permanencia (h)","T. Descarga (h)","Empresa","Ingreso","Salida"]]
+                df_tipo[cols_detalle]
                 .rename(columns={selected_location: "Tiempo (min)"})
+                .loc[lambda d: d["Tiempo (min)"].gt(0)]   # elimina 0 y NaN
                 .sort_values("Tiempo (min)", ascending=False)
                 .reset_index(drop=True)
             )
         
-            # Formato visual
+            # ==============================
+            # FORMATO VISUAL (NO IMPACTA PERFORMANCE)
+            # ==============================
             nias_filtradas["Tiempo (min)"] = nias_filtradas["Tiempo (min)"].round(2)
         
             st.dataframe(
                 nias_filtradas,
-                width='stretch'
+                width="stretch"
             )
 
 
@@ -708,6 +738,7 @@ elif pagina == "Detalle Zonas":
 
     else:
         st.info("No hay columnas de tiempo disponibles para graficar.")
+
 
 
 
