@@ -323,6 +323,7 @@ filtro_opcion = st.sidebar.selectbox(
         "Turno actual",
         "Turno anterior",
         "Últimas 6 horas",
+        "Últimas 12 horas",
         "Últimas 24 horas",
         "Última semana",
         "Último mes",
@@ -373,6 +374,9 @@ elif filtro_opcion == "Turno anterior":
 
 elif filtro_opcion == "Últimas 6 horas":
     df_graficos = df_graficos[df_graficos["Salida"] >= ahora - timedelta(hours=6)]
+
+elif filtro_opcion == "Últimas 12 horas":
+    df_graficos = df_graficos[df_graficos["Salida"] >= ahora - timedelta(hours=12)]
 
 elif filtro_opcion == "Últimas 24 horas":
     df_graficos = df_graficos[df_graficos["Salida"] >= ahora - timedelta(days=1)]
@@ -429,21 +433,26 @@ elif pagina == "Tiempos promedio de zona":
         labels={"Ubicación":"Ubicación","Promedio_minutos":"Tiempo promedio (minutos)"},
         text_auto=".2f",
         color_discrete_map={
-            "Plataforma": "#0e71db",
-            "Tolva": "#f0e009",
-            "Otro": "#d62728"
+            "Plataforma": "steelblue",
+            "Tolva": "orange",
         }
     )
     fig_tipo.update_traces(textposition='outside')
     fig_tipo.update_layout(
-        title="Tiempo promedio por ubicación según Tipo de unidad",
         xaxis_tickangle=-45,
         yaxis_title="Tiempo promedio (minutos)",
         xaxis_title="Ubicación",
-        legend_title="Tipo de unidad",
-        margin=dict(l=40, r=40, t=80, b=150),
-        legend=dict(orientation="h", yanchor="bottom", y=-1, xanchor="center", x=0.5)
+        height=500,  # ⬅️ AUMENTA ALTURA
+        margin=dict(l=20, r=20, t=30, b=120),
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=-0.45,
+            xanchor="center",
+            x=0.5
+        )
     )
+
     st.plotly_chart(fig_tipo, width='stretch')
 
 # ==============================
