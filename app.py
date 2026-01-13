@@ -448,6 +448,8 @@ elif pagina == "Tiempos promedio de zona":
         var_name="Ubicación",
         value_name="Promedio_minutos"
     )
+
+    df_tipo_long["Promedio_minutos"] = df_tipo_long["Promedio_minutos"].fillna(0)
     
     # ============================
     # ORDEN REAL DEL EJE X
@@ -748,6 +750,7 @@ elif pagina == "Detalle Zonas":
 
     else:
         st.info("No hay columnas de tiempo disponibles para graficar.")
+
 
 
 
