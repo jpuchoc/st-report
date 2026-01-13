@@ -646,7 +646,7 @@ elif pagina == "Detalle Zonas":
             # DETALLE POR NIA (ORDEN CORRECTO)
             # ==============================
             nias_filtradas = (
-                df_tipo[["NIA", selected_location, "Ingreso", "Empresa"]]
+                df_tipo[["NIA", selected_location,"T. Permanencia (h)","T. Descarga (h)","Empresa","Ingreso","Salida"]]
                 .rename(columns={selected_location: "Tiempo (min)"})
                 .sort_values("Tiempo (min)", ascending=False)
                 .reset_index(drop=True)
@@ -705,6 +705,7 @@ elif pagina == "Detalle Zonas":
 
     else:
         st.info("No hay columnas de tiempo disponibles para graficar.")
+
 
 
 
