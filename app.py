@@ -626,9 +626,16 @@ elif pagina == "Detalle Zonas":
             nias_filtradas = (
                 df_tipo[["NIA", "Ingreso", "Empresa", selected_location]]
                 .rename(columns={selected_location: "Tiempo (min)"})
-                .sort_values("Tiempo (min)", ascending=False)
-                .reset_index(drop=True)
             )
+            
+            cols = list(nias_filtradas.columns)
+            cols.remove("Tiempo (min)")
+            nia_index = cols.index("NIA") + 1
+            cols.insert(nia_index, "Tiempo (min)")
+            
+            nias_filtradas = nias_filtradas[cols].sort_values(
+                "Tiempo (min)", ascending=False
+            ).reset_index(drop=True)
 
             promedio_val = prom_ubicacion.loc[
                 prom_ubicacion["Ubicación"] == selected_location,
@@ -690,5 +697,6 @@ elif pagina == "Detalle Zonas":
 
     else:
         st.info("No hay columnas de tiempo disponibles para graficar.")
+
 
 
